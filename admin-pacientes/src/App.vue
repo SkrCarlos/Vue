@@ -1,8 +1,18 @@
 <script setup>
+  import Header from './components/Header.vue'
+  import Formulario from './components/Formulario.vue'
 </script>
 
 <template>
-  <h1 class="text-6xl font-medium">Hola mundo </h1>
+  <div class="container mx-auto mt-20">
+    <Header />
+
+    <div class="mt-12 md:flex">
+      <Formulario />
+    </div>
+    
+  </div>
+  
 </template>
 
 
