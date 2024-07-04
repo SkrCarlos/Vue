@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, onMounted, watch } from 'vue'
 
   import { uid } from 'uid'
   
@@ -18,10 +18,18 @@
   })
 
   const guardarPaciente = () => {
-    pacientes.value.push({ 
-      ...paciente, 
-      id: uid()
-    })
+
+    if ( paciente.id ){  // Existe id, actualiza
+      const { id } = paciente
+      const i = pacientes.value.findIndex(p => p.id === id)
+      pacientes.value[i] = { ...paciente }
+    } else { // No existe id, crea
+      pacientes.value.push({ 
+        ...paciente, 
+        id: uid()
+      })
+    }
+
     
     paciente.id = null
     paciente.nombre = ''
@@ -30,8 +38,30 @@
     paciente.alta = ''
     paciente.sintomas = ''
 
-
   }
+
+  const actualizarPaciente = id => {
+    const pacienteEditar = pacientes.value.find(p => p.id === id)
+    Object.assign(paciente, pacienteEditar)
+  }
+
+  const eliminarPaciente = id => {
+    pacientes.value = pacientes.value.filter(p => p.id !== id)
+  }
+
+  const guardarLocalStorage = () => {
+    localStorage.setItem('pacientes', JSON.stringify(pacientes.value))
+  }
+
+  onMounted(() => {
+    if (localStorage.getItem('pacientes')) {
+      pacientes.value = JSON.parse(localStorage.getItem('pacientes'))
+    }
+  })
+
+  watch(pacientes, () => {
+    guardarLocalStorage()
+  }, { deep: true })
 
 </script>
 
@@ -47,6 +77,7 @@
         v-model:alta ="paciente.alta"
         v-model:sintomas ="paciente.sintomas"
         @guardar-paciente="guardarPaciente"
+        :id="paciente.id"
       />
 
       <div class="md:w-1/2 md:h-screen overflow-y-scroll">
@@ -59,6 +90,8 @@
           <Paciente 
             v-for="paciente in pacientes"
             :paciente="paciente"
+            @actualizar-paciente="actualizarPaciente"
+            @eliminar-paciente="eliminarPaciente"
           />
         </div>
 

@@ -38,6 +38,10 @@
     sintomas: {
       type: String,
       required: true
+    },
+    id: {
+      type: [String, null],
+      required: false
     }
   })
 
@@ -60,6 +64,7 @@
     }, 1500)
       
   }
+
 
 </script>
 
@@ -163,7 +168,7 @@
       <input
         type="submit"
         class="bg-indigo-600 w-full mt-5 p-2 text-white uppercase font-bold hover:bg-indigo-800 cursor-pointer transition-color duration-500 ease-in-out"
-        value="Agregar Paciente"
+        :value=" id ? 'Editar Paciente' : 'Agregar Paciente'"
       >
       </input>
 
