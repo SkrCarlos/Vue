@@ -1,5 +1,38 @@
 <script setup>
-  import Presupuesto from './components/Presupuesto.vue';
+  import { ref, reactive } from 'vue'
+
+  import Presupuesto from './components/Presupuesto.vue'
+  import ControlPresupuesto from './components/ControlPresupuesto.vue'
+  import Modal from './components/Modal.vue'
+
+  import iconoNuevoGasto from './assets/img/nuevo-gasto.svg'
+
+  const modal = reactive({
+    animar: false,
+    mostrar: false
+  })
+
+  const presupuesto = ref(1000)
+  const disponible = ref(1000)
+  const gastado = ref(0)
+
+  const definirPresupuesto = cantidad => {
+    presupuesto.value = cantidad
+    disponible.value = cantidad
+  }
+
+  const mostrarModal = () => {
+    modal.mostrar = true
+    setTimeout(() => {
+      modal.animar = true
+    }, 200)
+  }
+  const cerrarModal = () => {
+    modal.animar = false
+    setTimeout(() => {
+      modal.mostrar = false
+    }, 500)
+  }
 </script>
 
 <template>
@@ -11,12 +44,39 @@
         <div class="contenedor-header contenedor sombra">
 
           <Presupuesto 
+            v-if="presupuesto === 0"
+            @definir-presupuesto="definirPresupuesto"
+          />
 
+          <ControlPresupuesto 
+            v-else
+            :presupuesto="presupuesto"
+            :disponible="disponible"
+            :gastado="gastado"
           />
 
         </div>
 
       </header>
+
+      <main v-if="presupuesto > 0">
+        
+        <div class="crear-gasto">
+            <img 
+              :src="iconoNuevoGasto" 
+              alt="Nuevo Gasto"
+              @click="mostrarModal"
+            >
+        </div>
+
+        <Modal 
+          v-if="modal.mostrar"
+          :modal="modal"
+          @cerrar-modal="cerrarModal"
+        />
+
+      </main>
+
     </div>
 </template>
 
@@ -83,4 +143,19 @@
     border-radius: 1.2rem;
     padding: 5rem;
   }
+
+  .crear-gasto {
+    position: fixed;
+    bottom: 5rem;
+    right: 5rem;
+  }
+  .crear-gasto img {
+    width: 5rem;
+    cursor: pointer;
+    transition: all 0.7s ease;
+  }
+  .crear-gasto img:hover {
+    transform: rotate(180deg);
+  }
+
 </style>

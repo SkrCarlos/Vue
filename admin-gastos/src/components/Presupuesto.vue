@@ -1,20 +1,27 @@
 <script setup>
-  import { ref } from 'vue';
+  import { ref } from 'vue'
 
-  import Alerta from './Alerta.vue';
+  import Alerta from './Alerta.vue'
 
   const presupuesto = ref()
-
   const error = ref('')
 
+  const emit = defineEmits([
+    'definir-presupuesto'
+  ])
+
   const definirPresupuesto = () => {
-    if ( presupuesto.value <= 0) {
+    if ( presupuesto.value <= 0 || presupuesto.value === undefined) {
       error.value = 'El presupuesto no es válido'
+
 
       setTimeout(() => {
         error.value = ''
       }, 2000)
-    }
+      return
+    } 
+
+    emit( 'definir-presupuesto', presupuesto.value )
   }
 </script>
 
